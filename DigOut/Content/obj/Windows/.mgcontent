@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Profile>Reach</Profile>
+  <Platform>Windows</Platform>
+  <Config />
+  <SourceFiles>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/0.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/1.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/2.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/3.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/4.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/5.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/6.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/7.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/8.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/9.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/10.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/11.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/12.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/13.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/14.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Environment/Blocks/Terrain/15.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/UI/Cursor.png</File>
+    <File>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Fonts/Arial.spritefont</File>
+  </SourceFiles>
+</SourceFileCollection>

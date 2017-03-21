@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SourceFile>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/Fonts/Arial.spritefont</SourceFile>
+  <SourceTime>2017-03-01T21:05:30+06:00</SourceTime>
+  <DestFile>C:/Users/Erzhan/Documents/Visual Studio 2017/Projects/DigOut/DigOut/Content/bin/Windows/Fonts/Arial.xnb</DestFile>
+  <DestTime>2017-03-21T16:25:53.0085668+06:00</DestTime>
+  <Importer>FontDescriptionImporter</Importer>
+  <ImporterTime>2017-03-01T21:05:36+06:00</ImporterTime>
+  <Processor>FontDescriptionProcessor</Processor>
+  <ProcessorTime>2017-03-01T21:05:36+06:00</ProcessorTime>
+  <Parameters>
+    <Key>PremultiplyAlpha</Key>
+    <Value>True</Value>
+  </Parameters>
+  <Parameters>
+    <Key>TextureFormat</Key>
+    <Value>Compressed</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>
