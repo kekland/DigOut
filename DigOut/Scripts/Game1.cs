@@ -20,6 +20,7 @@ namespace DigOut
         Texture2D[] GroundTextures; //Ground textures (15 states)
         Texture2D[] BreakTextures; //Damage textures (5 states)
         Texture2D Cursor; //Cursor texture
+        Texture2D BackgroundTexture; //Background texture
         public Texture2D Player; //Player texture
 
         FrameCounter FPSCounter = new FrameCounter(); //FPS counter class
@@ -79,8 +80,9 @@ namespace DigOut
             //Load other textures
             Player = Content.Load<Texture2D>("Environment/Blocks/Terrain/15");
             defaultFont = Content.Load<SpriteFont>("Fonts/Arial");
-            player = new Player();
             Cursor = Content.Load<Texture2D>("UI/Cursor");
+            BackgroundTexture = Content.Load<Texture2D>("Environment/Blocks/Background/Background");
+            player = new Player();
 
             //Generate world :
             //Create random instance
@@ -230,10 +232,10 @@ namespace DigOut
         protected override void Draw(GameTime gameTime)
         {
             //Clear our background
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.White);
 
             //Begin sprite batch : We need to clamp as point and blend with alpha
-            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.PointClamp);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp);
 
             //Draw chunks based on current camera's position clamped to chunk grid
             int xGrid = (int)Math.Ceiling((CameraPosition.X / (float)WorldMetrics.ChunkSizeX) / (float)WorldMetrics.SpriteSize);
@@ -260,11 +262,29 @@ namespace DigOut
                             int blockX = xChunk * WorldMetrics.ChunkSizeX + x;
                             int blockY = yChunk * WorldMetrics.ChunkSizeY + y;
 
+                            //Calculate block's color
+                            float PlayerToBlockDistance = Vector2.DistanceSquared(PlayerPositionGrid(), new Vector2(blockX, blockY));
+                            float ColorValue = (300f - PlayerToBlockDistance) / 300f;
+                            Color color;
+                            if (ColorValue > 0f)
+                            {
+                                color = new Color(ColorValue, ColorValue, ColorValue);
+                            }
+                            else
+                            {
+                                color = Color.Black;
+                            }
+
+
+                            //Draw background
+                            spriteBatch.Draw(BackgroundTexture, new Vector2(blockX * WorldMetrics.SpriteSize, blockY * WorldMetrics.SpriteSize) - CameraPosition, null, color, 0f, Vector2.Zero, WorldMetrics.SpriteSize / 16f, SpriteEffects.None, 1f);
+
+
                             //If block is solid (Not air)
                             if (GetBlock(blockX, blockY) == 1)
                             {
                                 //Draw it
-                                spriteBatch.Draw(GroundTextures[Chunks[xChunk, yChunk].GetBlockType(x, y)], new Vector2(blockX * WorldMetrics.SpriteSize, blockY * WorldMetrics.SpriteSize) - CameraPosition, null, Color.White, 0f, Vector2.Zero, WorldMetrics.SpriteSize / 16f, SpriteEffects.None, 0f);
+                                spriteBatch.Draw(GroundTextures[Chunks[xChunk, yChunk].GetBlockType(x, y)], new Vector2(blockX * WorldMetrics.SpriteSize, blockY * WorldMetrics.SpriteSize) - CameraPosition, null, color, 0f, Vector2.Zero, WorldMetrics.SpriteSize / 16f, SpriteEffects.None, 0.5f);
 
                                 //Get health
                                 int health = Chunks[xChunk, yChunk].GetBlockHealth(x, y);
@@ -272,7 +292,7 @@ namespace DigOut
                                 //If block is damaged : display damage
                                 if (health < 5)
                                 {
-                                    spriteBatch.Draw(BreakTextures[health], new Vector2(blockX * WorldMetrics.SpriteSize, blockY * WorldMetrics.SpriteSize) - CameraPosition, null, Color.White, 0f, Vector2.Zero, WorldMetrics.SpriteSize / 16f, SpriteEffects.None, 0f);
+                                    spriteBatch.Draw(BreakTextures[health], new Vector2(blockX * WorldMetrics.SpriteSize, blockY * WorldMetrics.SpriteSize) - CameraPosition, null, color, 0f, Vector2.Zero, WorldMetrics.SpriteSize / 16f, SpriteEffects.None, 0f);
                                 }
                             }
                         }
@@ -445,6 +465,11 @@ namespace DigOut
         {
             //Return world player position (Screen)
             return CameraPosition + player.Position;
+        }
+
+        public Vector2 PlayerPositionGrid()
+        {
+            return (CameraPosition + player.Position) / WorldMetrics.SpriteSize;
         }
         
     }

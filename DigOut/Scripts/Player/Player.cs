@@ -30,6 +30,7 @@ namespace DigOut
             //Calculate camera position
             return Cam + Position;
         }
+        
 
         /// <summary>
         /// Function used to handle keyboard input.

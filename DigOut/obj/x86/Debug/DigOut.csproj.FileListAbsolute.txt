@@ -44,3 +44,4 @@ C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\
 C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\x86\Debug\Content\Environment\Blocks\Damage\3.xnb
 C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\x86\Debug\Content\Environment\Blocks\Damage\4.xnb
 C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\x86\Debug\Content\Environment\Blocks\Damage\5.xnb
+C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\x86\Debug\Content\Environment\Blocks\Background\Background.xnb
