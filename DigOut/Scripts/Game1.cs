@@ -265,7 +265,7 @@ namespace DigOut
                             //Calculate block's color
                             float PlayerToBlockDistance = Vector2.DistanceSquared(PlayerPositionGrid(), new Vector2(blockX, blockY));
                             float ColorValue = (300f - PlayerToBlockDistance) / 300f;
-                            Color color;
+                            Color color;    
                             if (ColorValue > 0f)
                             {
                                 color = new Color(ColorValue, ColorValue, ColorValue);
