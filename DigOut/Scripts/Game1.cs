@@ -17,7 +17,8 @@ namespace DigOut
         const int toDrawChunksThreshold = 4;
         const int chunkDisplayThreshold = 30;
 
-        Texture2D[] Textures;
+        Texture2D[] GroundTextures;
+        Texture2D[] BreakTextures;
         Texture2D Cursor;
         Texture2D Player;
 
@@ -61,12 +62,17 @@ namespace DigOut
 
             Chunks = new Chunk[WorldMetrics.ChunkCountX, WorldMetrics.ChunkCountY];
 
-            Textures = new Texture2D[16];
-
+            GroundTextures = new Texture2D[16];
+            BreakTextures = new Texture2D[5];
             for (int i = 0; i < 16; i++)
             {
-                Textures[i] = Content.Load<Texture2D>("Environment/Blocks/Terrain/" + i.ToString());
+                GroundTextures[i] = Content.Load<Texture2D>("Environment/Blocks/Terrain/" + i.ToString());
             }
+            for(int i = 1; i <= 5; i++)
+            {
+                BreakTextures[i - 1] = Content.Load<Texture2D>("Environment/Blocks/Damage/" + i.ToString());
+            }
+
             Player = Content.Load<Texture2D>("Environment/Blocks/Terrain/15");
             defaultFont = Content.Load<SpriteFont>("Fonts/Arial");
 
@@ -117,6 +123,13 @@ namespace DigOut
 
         }
 
+        float ToolSpeed = 0.05f;
+        float PreviousBreakTime = 0f;
+        float PreviousPlaceTime = 0f;
+
+        Vector2 PlayerVelocity;
+        bool Landed = true;
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -127,22 +140,37 @@ namespace DigOut
             mousePosition = new Vector2(mouseState.X, mouseState.Y);
 
             mouseCameraPosition = mousePosition + CameraPosition;
+            float Time = (float)gameTime.TotalGameTime.TotalSeconds;
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-                int X = (int)mouseCameraPosition.X / WorldMetrics.SpriteSize;
-                int Y = (int)mouseCameraPosition.Y / WorldMetrics.SpriteSize;
-                if (X >= 0 && Y >= 0 && X < WorldMetrics.ChunkCountX * WorldMetrics.ChunkSizeX && Y < WorldMetrics.ChunkCountY * WorldMetrics.ChunkSizeY)
+                if (Math.Round(Vector2.DistanceSquared(mouseCameraPosition, PlayerPositionWorld()) / WorldMetrics.SpriteSize) < 400f)
                 {
-                    SetBlock(X, Y, 1);
+                    int X = (int)mouseCameraPosition.X / WorldMetrics.SpriteSize;
+                    int Y = (int)mouseCameraPosition.Y / WorldMetrics.SpriteSize;
+                    if (X >= 0 && Y >= 0 && X < WorldMetrics.ChunkCountX * WorldMetrics.ChunkSizeX && Y < WorldMetrics.ChunkCountY * WorldMetrics.ChunkSizeY)
+                    {
+                        if (Time - PreviousPlaceTime >= ToolSpeed)
+                        {
+                            SetBlock(X, Y, 1);
+                            PreviousPlaceTime = Time;
+                        }
+                    }
                 }
             }
             if (mouseState.RightButton == ButtonState.Pressed)
             {
-                int X = (int)mouseCameraPosition.X / WorldMetrics.SpriteSize;
-                int Y = (int)mouseCameraPosition.Y / WorldMetrics.SpriteSize;
-                if (X >= 0 && Y >= 0 && X < WorldMetrics.ChunkCountX * WorldMetrics.ChunkSizeX && Y < WorldMetrics.ChunkCountY * WorldMetrics.ChunkSizeY)
+                if (Math.Round(Vector2.DistanceSquared(mouseCameraPosition, PlayerPositionWorld()) / WorldMetrics.SpriteSize) < 400f)
                 {
-                    SetBlock(X, Y, 0);
+                    int X = (int)mouseCameraPosition.X / WorldMetrics.SpriteSize;
+                    int Y = (int)mouseCameraPosition.Y / WorldMetrics.SpriteSize;
+                    if (X >= 0 && Y >= 0 && X < WorldMetrics.ChunkCountX * WorldMetrics.ChunkSizeX && Y < WorldMetrics.ChunkCountY * WorldMetrics.ChunkSizeY)
+                    {
+                        if (Time - PreviousBreakTime >= ToolSpeed)
+                        {
+                            SetBlock(X, Y, 0);
+                            PreviousBreakTime = Time;
+                        }
+                    }
                 }
             }
 
@@ -152,36 +180,57 @@ namespace DigOut
             if (keyboardState.IsKeyDown(Keys.W))
             {
                 if (GetBlock((int)Math.Round(PlayerPositionWorld().X / WorldMetrics.SpriteSize),
-                             (int)Math.Round((PlayerPositionWorld().Y - PlayerSpeed - Player.Height / 2) / WorldMetrics.SpriteSize)) != 1)
+                             (int)Math.Round((PlayerPositionWorld().Y + PlayerSpeed) / WorldMetrics.SpriteSize)) == 1)
                 {
-                    CameraPosition.Y -= PlayerSpeed;
+                    PlayerVelocity.Y = -10f;
                 }
             }
-            if (keyboardState.IsKeyDown(Keys.S))
-            {
-                if (GetBlock((int)Math.Round(PlayerPositionWorld().X / WorldMetrics.SpriteSize),
-                             (int)Math.Round((PlayerPositionWorld().Y + PlayerSpeed) / WorldMetrics.SpriteSize)) != 1)
-                {
-                    CameraPosition.Y += PlayerSpeed;
-                }
-            }
+
+
             if (keyboardState.IsKeyDown(Keys.A))
             {
-                if (GetBlock((int)Math.Round((PlayerPositionWorld().X - PlayerSpeed - Player.Width / 2) / WorldMetrics.SpriteSize), 
-                             (int)Math.Round(PlayerPositionWorld().Y / WorldMetrics.SpriteSize)) != 1)
+                if (GetBlock((int)Math.Round((PlayerPositionWorld().X - PlayerSpeed - Player.Width / 2) / WorldMetrics.SpriteSize),
+                             (int)Math.Floor(PlayerPositionWorld().Y / WorldMetrics.SpriteSize)) != 1)
                 {
-                    CameraPosition.X -= PlayerSpeed;
+                    PlayerVelocity.X = -PlayerSpeed;
+                }
+                else
+                {
+                    PlayerVelocity.X = 0;
                 }
             }
-            if (keyboardState.IsKeyDown(Keys.D))
+            else if (keyboardState.IsKeyDown(Keys.D))
             {
                 if (GetBlock((int)Math.Round((PlayerPositionWorld().X + PlayerSpeed) / WorldMetrics.SpriteSize),
-                             (int)Math.Round(PlayerPositionWorld().Y / WorldMetrics.SpriteSize)) != 1)
+                             (int)Math.Floor(PlayerPositionWorld().Y / WorldMetrics.SpriteSize)) != 1)
                 {
-                    CameraPosition.X += PlayerSpeed;
+                    PlayerVelocity.X = PlayerSpeed;
+                }
+                else
+                {
+                    PlayerVelocity.X = 0;
                 }
             }
-            
+            else
+            {
+                PlayerVelocity.X = 0;
+            }
+
+            //if (GetBlock((int)Math.Round(PlayerPositionWorld().X / WorldMetrics.SpriteSize),
+            //             (int)Math.Round((PlayerPositionWorld().Y - PlayerVelocity.Y) / WorldMetrics.SpriteSize)) == 1)
+            //{
+            //        PlayerVelocity.Y = 0;
+            //}
+            if (GetBlock((int)Math.Round(PlayerPositionWorld().X / WorldMetrics.SpriteSize),
+                         (int)Math.Round((PlayerPositionWorld().Y + PlayerVelocity.Y) / WorldMetrics.SpriteSize)) != 1)
+            {
+                 PlayerVelocity.Y += 0.5f;
+            }
+            else
+            {
+                PlayerVelocity.Y = 0;
+            }
+            CameraPosition += PlayerVelocity;
 
             //if(previousScrollValue > mouseState.ScrollWheelValue)
             //{
@@ -228,7 +277,12 @@ namespace DigOut
                              int blockY = yChunk * WorldMetrics.ChunkSizeY + y;
                              if (GetBlock(blockX, blockY) == 1)
                              {
-                                 spriteBatch.Draw(Textures[Chunks[xChunk, yChunk].GetBlockType(x, y)], new Vector2(blockX * WorldMetrics.SpriteSize, blockY * WorldMetrics.SpriteSize) - CameraPosition, null, Color.White, 0f, Vector2.Zero, WorldMetrics.SpriteSize / 16f, SpriteEffects.None, 0f);
+                                spriteBatch.Draw(GroundTextures[Chunks[xChunk, yChunk].GetBlockType(x, y)], new Vector2(blockX * WorldMetrics.SpriteSize, blockY * WorldMetrics.SpriteSize) - CameraPosition, null, Color.White, 0f, Vector2.Zero, WorldMetrics.SpriteSize / 16f, SpriteEffects.None, 0f);
+                                int health = Chunks[xChunk, yChunk].GetBlockHealth(x, y);
+                                if (health < 5)
+                                {
+                                    spriteBatch.Draw(BreakTextures[health], new Vector2(blockX * WorldMetrics.SpriteSize, blockY * WorldMetrics.SpriteSize) - CameraPosition, null, Color.White, 0f, Vector2.Zero, WorldMetrics.SpriteSize / 16f, SpriteEffects.None, 0f);
+                                }
                              }
                          }
                      }
@@ -337,6 +391,7 @@ namespace DigOut
         {
             return CameraPosition + PlayerPosition;
         }
+        
     }
 
     public struct VectorInt

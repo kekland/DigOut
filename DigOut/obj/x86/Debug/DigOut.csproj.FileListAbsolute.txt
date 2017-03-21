@@ -39,3 +39,8 @@ C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\
 C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\obj\x86\Debug\DigOut.csprojResolveAssemblyReference.cache
 C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\obj\x86\Debug\DigOut.exe
 C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\obj\x86\Debug\DigOut.pdb
+C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\x86\Debug\Content\Environment\Blocks\Damage\1.xnb
+C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\x86\Debug\Content\Environment\Blocks\Damage\2.xnb
+C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\x86\Debug\Content\Environment\Blocks\Damage\3.xnb
+C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\x86\Debug\Content\Environment\Blocks\Damage\4.xnb
+C:\Users\Erzhan\Documents\Visual Studio 2017\Projects\DigOut\DigOut\bin\Windows\x86\Debug\Content\Environment\Blocks\Damage\5.xnb

@@ -12,5 +12,12 @@ namespace DigOut
         public int State;
 
         public int Hardness;
+
+        public Block(int iD, int state, int hardness)
+        {
+            ID = iD;
+            State = state;
+            Hardness = hardness;
+        }
     }
 }

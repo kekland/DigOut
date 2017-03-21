@@ -23,7 +23,7 @@ namespace DigOut
             {
                 for(int j = 0; j < Height; j++)
                 {
-                    Blocks[i, j] = new Block();
+                    Blocks[i, j] = new Block(0, 0, 5);
                 }
             }
             ChunkX = x;
@@ -33,9 +33,23 @@ namespace DigOut
 
         public void SetBlock(int X, int Y, int To, bool recalc = false)
         {
-            Blocks[X, Y].ID = To;
-            Blocks[X, Y].Hardness = 10;
-            if (recalc)
+            bool Changed = false;
+            if(To == 0 && Blocks[X, Y].ID == 1)
+            {
+                Blocks[X, Y].Hardness--;
+                if(Blocks[X, Y].Hardness == -1)
+                {
+                    Blocks[X, Y].ID = 0;
+                    Changed = true;
+                }
+            }
+            else if(To == 1 && Blocks[X, Y].ID == 0)
+            {
+                Blocks[X, Y].ID = To;
+                Blocks[X, Y].Hardness = 5;
+                Changed = true;
+            }
+            if (recalc && Changed)
             {
                 Recalculate();
                 if (X == 0)
@@ -64,6 +78,11 @@ namespace DigOut
         public int GetBlockType(int X, int Y)
         {
             return Blocks[X, Y].State;
+        }
+
+        public int GetBlockHealth(int X, int Y)
+        {
+            return Blocks[X, Y].Hardness;
         }
 
         public void Smooth()
