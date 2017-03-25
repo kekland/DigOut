@@ -32,7 +32,7 @@ namespace DigOut
             {
                 for(int j = 0; j < Height; j++)
                 {
-                    Blocks[i, j] = new Block(0, 0, 5);
+					Blocks[i, j] = new Block(0, 0, 5);
                 }
             }
             ChunkX = x;
@@ -53,7 +53,7 @@ namespace DigOut
             bool Changed = false;
 
             //If we want to destroy block
-            if(To == 0 && Blocks[X, Y].ID == 1)
+            if(To == 0 && Blocks[X, Y].ID != 0)
             {
                 //Lower its hardness level
                 Blocks[X, Y].Hardness--;
@@ -67,7 +67,7 @@ namespace DigOut
                 }
             }
             //Otherwise, if we want to set block
-            else if(To == 1 && Blocks[X, Y].ID == 0)
+            else if(To != 0 && Blocks[X, Y].ID == 0)
             {
                 //Set chunk and set that chunk has changed
                 Blocks[X, Y].ID = To;
@@ -78,26 +78,8 @@ namespace DigOut
             //If we should recalculate and chunk was changed
             if (recalc && Changed)
             {
-                //Recaulculate our chunk
-                Recalculate();
-
-                //Check for nearest chunks : should they change
-                if (X == 0)
-                {
-                    parent.RecalculateChunk(ChunkX - 1, ChunkY);
-                }
-                if (Y == 0)
-                {
-                    parent.RecalculateChunk(ChunkX, ChunkY - 1);
-                }
-                if (X == (WorldMetrics.ChunkSizeX - 1))
-                {
-                    parent.RecalculateChunk(ChunkX + 1, ChunkY);
-                }
-                if (Y == (WorldMetrics.ChunkSizeY - 1))
-                {
-                    parent.RecalculateChunk(ChunkX, ChunkY + 1);
-                }
+                //Recaulculate nearest blocks
+                RecalculateNear(X, Y);
             }
         }
 
@@ -140,7 +122,7 @@ namespace DigOut
         /// <summary>
         /// Function used to smooth out chunk using Cellular Automata algorithm.
         /// </summary>
-        public void Smooth()
+        public void Smooth(Random r)
         {
             //Loop through all blocks
             for (int i = 0; i < WorldMetrics.ChunkSizeX; i++)
@@ -153,7 +135,18 @@ namespace DigOut
                     //If they are more than 4 : our block should be solid too, otherwise - air.
                     if (adjacentCount > 4)
                     {
-                        Blocks[i, j].ID = 1;
+                        int ID = parent.GetAdjacentOre(i, j);
+                        if(ID != 1)
+                        {
+                            if (r.Next(0, 11) < parent.Data[ID - 1].GrowChance)
+                            {
+                                Blocks[i, j].ID = ID;
+                            }
+                        }
+                        else
+                        {
+                            Blocks[i, j].ID = 1;
+                        }
                     }
                     else if (adjacentCount < 4)
                     {
@@ -174,7 +167,7 @@ namespace DigOut
                 for (int j = 0; j < WorldMetrics.ChunkSizeY; j++)
                 {
                     //If block is solid :
-                    if (GetBlock(i, j) == 1)
+                    if (GetBlock(i, j) != 0)
                     {
                         //Calculate its state and set it
                         int state = parent.GetState((ChunkX * WorldMetrics.ChunkSizeX) + i, (ChunkY * WorldMetrics.ChunkSizeY) + j);
@@ -182,6 +175,86 @@ namespace DigOut
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Function used to recalculate chunk's one block state.
+        /// </summary>
+        /// <param name="x">Local X coordinate of block.</param>
+        /// <param name="y">Local Y coordinate of block.</param>
+        public void RecalculateBlock(int x, int y)
+        {
+            //Check if block is out of bounds
+
+            bool adjacent = false;
+            if(x >= WorldMetrics.ChunkSizeX)
+            {
+                if (ChunkX + 1 < WorldMetrics.ChunkCountX)
+                {
+                    parent.Chunks[ChunkX + 1, ChunkY].RecalculateBlock(x % WorldMetrics.ChunkSizeX, y);
+                    return;
+                }
+            }
+            else if(x < 0)
+            {
+                if (ChunkX - 1 >= 0)
+                {
+                    parent.Chunks[ChunkX - 1, ChunkY].RecalculateBlock((x + WorldMetrics.ChunkSizeX) % WorldMetrics.ChunkSizeX, y);
+                    return;
+                }
+            }
+
+            if(y >= WorldMetrics.ChunkSizeY)
+            {
+                if (ChunkY + 1 < WorldMetrics.ChunkCountY)
+                {
+                    parent.Chunks[ChunkX, ChunkY + 1].RecalculateBlock(x, y % WorldMetrics.ChunkSizeY);
+                    return;
+                }
+            }
+            else if(y < 0)
+            {
+                if (ChunkY - 1 >= 0)
+                {
+                    parent.Chunks[ChunkX, ChunkY - 1].RecalculateBlock(x, (y + WorldMetrics.ChunkSizeY) % WorldMetrics.ChunkSizeY);
+                    return;
+                }
+            }
+            
+            //Calculate its state and set it
+            int state = parent.GetState((ChunkX * WorldMetrics.ChunkSizeX) + x, (ChunkY * WorldMetrics.ChunkSizeY) + y);
+            Blocks[x, y].State = state;
+        }
+
+        /// <summary>
+        /// Function used to recalculate states of adjacent blocks.
+        /// </summary>
+        /// <param name="x">Local X coordinate of block.</param>
+        /// <param name="y">Local Y coordinate of block.</param>
+        public void RecalculateNear(int x, int y)
+        {
+            RecalculateBlock(x, y);
+            RecalculateBlock(x - 1, y);
+            RecalculateBlock(x + 1, y);
+            RecalculateBlock(x, y + 1);
+            RecalculateBlock(x, y - 1);
+        }
+
+        public int[,] Get2DArray()
+        {
+            int[,] a = new int[WorldMetrics.ChunkSizeX, WorldMetrics.ChunkSizeY];
+            for(int x = 0; x < WorldMetrics.ChunkSizeX; x++)
+            {
+                for(int y = 0; y < WorldMetrics.ChunkSizeY; y++)
+                {
+                    a[x, y] = Blocks[x, y].ID;
+                }
+            }
+            return a;
+        }
+        public void SaveData()
+        {
+            IOModule.Write2DArray(ChunkX, ChunkY, Get2DArray());
         }
     }
 

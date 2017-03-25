@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<items>
+	<item>
+		<id>0</id>
+		<name>Stone chunk</name>
+		<desc>Some ancient and old chunks of stone.</desc>
+		<placeable>True</placeable>
+		<craftable>True</craftable>
+		<craft>
+			<recipent>
+				<id>1</id>
+				<count>4</count>
+			</recipent>
+			<craftPlace>Workbench</craftPlace>
+			<craftTime>1</craftTime>
+			<craftResult>1</craftResult>
+		</craft>
+		<maxStack>100</maxStack>
+		<marketCost>0.01</marketCost>
+	</item>
+	<item>
+		<id>1</id>
+		<name>Stone dust</name>
+		<desc>Stone chunk after macerator.</desc>
+		<placeable>False</placeable>
+		<craftable>True</craftable>
+		<craft>
+			<recipent>
+				<id>0</id>
+				<count>1</count>
+			</recipent>
+			<craftPlace>Macerator</craftPlace>
+			<craftTime>4</craftTime>
+			<craftResult>3</craftResult>
+		</craft>
+	</item>
+</items>
